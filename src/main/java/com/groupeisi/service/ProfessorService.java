@@ -2,6 +2,7 @@ package com.groupeisi.service;
 
 import com.groupeisi.dao.IProfessorRepository;
 import com.groupeisi.dto.Professor;
+import com.groupeisi.entities.ProfessorEntity;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
 import com.groupeisi.mapping.ProfessorMapper;
@@ -29,7 +30,7 @@ public class ProfessorService {
     public List<Professor> getProfessors() {
         int id = 0;
         return StreamSupport.stream(Optional.ofNullable(iProfessorRepository.findAll()).orElseThrow(() ->
-                                new EntityNotFoundException(messageSource.getMessage("appUser.notfound", new Object[]{id}, Locale.getDefault())))
+                                new EntityNotFoundException(messageSource.getMessage("prof.notfound", new Object[]{id}, Locale.getDefault())))
                         .spliterator(), false)
                 .map(professorMapper::toProfessor)
                 .collect(Collectors.toList());
@@ -40,8 +41,17 @@ public class ProfessorService {
     public Professor getProfessor(Integer id) {
         return professorMapper.toProfessor(iProfessorRepository.findById(id)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(messageSource.getMessage("appUserId.notfound", new Object[]{id},
+                        new EntityNotFoundException(messageSource.getMessage("profId.notfound", new Object[]{id},
                                 Locale.getDefault()))));
+    }
+
+    // Get One ProfessorEntity By his ID(matricule)
+    @Transactional(readOnly = true)
+    public ProfessorEntity getProfessorEntity(Integer id) {
+        return iProfessorRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(messageSource.getMessage("profId.notfound", new Object[]{id},
+                                Locale.getDefault())));
     }
 
     // Get One Professor By his Email
@@ -49,7 +59,7 @@ public class ProfessorService {
     public Professor getProfessorByEmail(String email) {
         return professorMapper.toProfessor(Optional.ofNullable(iProfessorRepository.findByEmail(email))
                 .orElseThrow(() ->
-                        new EntityNotFoundException(messageSource.getMessage("appUserEmail.notfound", new Object[]{email},
+                        new EntityNotFoundException(messageSource.getMessage("profEmail.notfound", new Object[]{email},
                                 Locale.getDefault()))));
 
     }
@@ -58,7 +68,7 @@ public class ProfessorService {
     @Transactional(readOnly = true)
     public List<Professor> getProfessorByLastname(String lastname) {
         return StreamSupport.stream(Optional.ofNullable(iProfessorRepository.findByNom(lastname)).orElseThrow(() ->
-                                new EntityNotFoundException(messageSource.getMessage("appUserNom.notfound", new Object[]{lastname}, Locale.getDefault())))
+                                new EntityNotFoundException(messageSource.getMessage("profNom.notfound", new Object[]{lastname}, Locale.getDefault())))
                         .spliterator(), false)
                 .map(professorMapper::toProfessor)
                 .collect(Collectors.toList());
@@ -68,7 +78,7 @@ public class ProfessorService {
     @Transactional(readOnly = true)
     public List<Professor> getProfessorByFirstname(String firstname) {
         return StreamSupport.stream(Optional.ofNullable(iProfessorRepository.findByPrenom(firstname)).orElseThrow(() ->
-                                new EntityNotFoundException(messageSource.getMessage("appUserPrenom.notfound", new Object[]{firstname}, Locale.getDefault())))
+                                new EntityNotFoundException(messageSource.getMessage("profPrenom.notfound", new Object[]{firstname}, Locale.getDefault())))
                         .spliterator(), false)
                 .map(professorMapper::toProfessor)
                 .collect(Collectors.toList());
@@ -78,7 +88,7 @@ public class ProfessorService {
     public List<Professor> getProfessorByPrenomAndNom(String firstname, String lastname) {
         return StreamSupport.stream(Optional.ofNullable(iProfessorRepository.findByPrenomAndNom(firstname, lastname))
                         .orElseThrow(() -> new EntityNotFoundException(
-                                        messageSource.getMessage("appUserPrenomNom.notfound", new Object[]{firstname, lastname}, Locale.getDefault())
+                                        messageSource.getMessage("profPrenomNom.notfound", new Object[]{firstname, lastname}, Locale.getDefault())
                                 )
                         )
                         .spliterator(), false)
@@ -90,7 +100,7 @@ public class ProfessorService {
     public Professor getProfessorByEmailAndPassword(String email, String password) {
         return professorMapper.toProfessor(Optional.ofNullable(iProfessorRepository.findByEmailAndPassword(email, password))
                 .orElseThrow(() ->
-                        new EntityNotFoundException(messageSource.getMessage("appUserEmail.notfound", new Object[]{email},
+                        new EntityNotFoundException(messageSource.getMessage("profEmail.notfound", new Object[]{email},
                                 Locale.getDefault()
                         )
                         )
@@ -111,7 +121,7 @@ public class ProfessorService {
                     return professorMapper.toProfessor(iProfessorRepository.save(professorMapper.fromProfessor(Professor)));
                 })
                 .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage("appUser.notfound", new Object[]{id}, Locale.getDefault()))
+                        () -> new EntityNotFoundException(messageSource.getMessage("prof.notfound", new Object[]{id}, Locale.getDefault()))
                 );
     }
 
@@ -120,7 +130,7 @@ public class ProfessorService {
         try {
             iProfessorRepository.deleteById(id);
         } catch (Exception e) {
-            throw new RequestException(messageSource.getMessage("appUser.errordeletion", new Object[] {id},
+            throw new RequestException(messageSource.getMessage("prof.errordeletion", new Object[] {id},
                     Locale.getDefault()), HttpStatus.CONFLICT);
         }
     }

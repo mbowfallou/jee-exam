@@ -20,7 +20,7 @@ public class ModuleEntity {
     private String jours;
     private int credit;
     private int quantum;
-    private String docs;
+    private String docs; //private MultipartFile[] docs;
     @ManyToOne(fetch = FetchType.LAZY) //@JoinColumn(name = "professor_id", referencedColumnName = "id")
     private ProfessorEntity professor;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -21,6 +21,4 @@ public class Professor {
     private String email;
     private String password;
     private int etat;
-    private List<ModuleDto> modules;
-    private AppRoles appRoles;
 }

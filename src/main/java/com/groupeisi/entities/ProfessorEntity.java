@@ -26,8 +26,6 @@ public class ProfessorEntity {
     private String email;
     private String password;
     private int etat;
-    @OneToMany(mappedBy = "professor")
-    private List<ModuleEntity> modules;
     @ManyToOne
     private AppRolesEntity appRoles;
 }

@@ -22,6 +22,5 @@ public class Student {
     private String password;
     private int etat;
     private Classe classe;
-    private AppRoles appRoles;
-    private Filiere filiere;
+    private int filiere_id;
 }

@@ -18,8 +18,4 @@ public class FiliereEntity {
     private Integer id;
     @Column(nullable = false, length = 200, unique = true)
     private String name;
-    @OneToMany(mappedBy = "filiere")
-    private List<StudentEntity> students;
-    @OneToMany(mappedBy = "filiere")
-    private List<ModuleEntity> modules;
 }

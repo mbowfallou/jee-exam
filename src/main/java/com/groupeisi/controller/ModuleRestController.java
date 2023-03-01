@@ -33,7 +33,7 @@ public class ModuleRestController {
 
     // Get One Module By its Name
     @GetMapping("/nom/{nom}")
-    public ModuleDto getModuleByName(@PathVariable("nom") String name){
+    public List<ModuleDto> getModuleByName(@PathVariable("nom") String name){
         return moduleService.getModuleByName(name);
     }
 

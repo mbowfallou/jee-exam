@@ -14,6 +14,6 @@ public class ModuleDto {
     private int credit;
     private int quantum;
     private String docs;
-    private Professor professor;
-    private Filiere filiere;
+    private int professor_id;
+    private int filiere_id;
 }

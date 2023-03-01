@@ -3,6 +3,7 @@ package com.groupeisi.service;
 import com.groupeisi.dao.IFiliereRepository;
 import com.groupeisi.dao.IModuleRepository;
 import com.groupeisi.dto.Filiere;
+import com.groupeisi.entities.FiliereEntity;
 import com.groupeisi.exception.EntityAlreadyExistsException;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
@@ -47,6 +48,15 @@ public class FiliereService {
                                 Locale.getDefault()))));
     }
 
+    // Get One FiliereEntity By its ID
+    @Transactional(readOnly = true)
+    public FiliereEntity getFiliereEntity(Integer id) {
+        return iFiliereRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(messageSource.getMessage("filiereId.notfound", new Object[]{id},
+                                Locale.getDefault())));
+    }
+
     // Get One Filiere By its name
     @Transactional(readOnly = true)
     public Filiere getFiliereByName(String name) {
@@ -69,14 +79,19 @@ public class FiliereService {
 
     @Transactional
     public Filiere updateFiliere(Integer id, Filiere filiere) {
-        return iFiliereRepository.findById(id)
-                .map(entity -> {
-                    filiere.setId(id);
-                    return filiereMapper.toFiliere(iFiliereRepository.save(filiereMapper.fromFiliere(filiere)));
-                })
-                .orElseThrow(
-                        () -> new EntityNotFoundException(messageSource.getMessage("filiere.notfound", new Object[]{id}, Locale.getDefault()))
-                );
+        if(iFiliereRepository.findByName(filiere.getName()) != null) {
+            throw new EntityAlreadyExistsException(messageSource.getMessage("filiereName.exists", new Object[]{filiere.getName()},
+                    Locale.getDefault()));
+        } else {
+            return iFiliereRepository.findById(id)
+                    .map(entity -> {
+                        filiere.setId(id);
+                        return filiereMapper.toFiliere(iFiliereRepository.save(filiereMapper.fromFiliere(filiere)));
+                    })
+                    .orElseThrow(
+                            () -> new EntityNotFoundException(messageSource.getMessage("filiere.notfound", new Object[]{id}, Locale.getDefault()))
+                    );
+        }
     }
 
     @Transactional

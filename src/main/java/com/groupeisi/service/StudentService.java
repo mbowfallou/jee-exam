@@ -2,6 +2,11 @@ package com.groupeisi.service;
 
 import com.groupeisi.dao.IStudentRepository;
 import com.groupeisi.dto.Student;
+import com.groupeisi.entities.FiliereEntity;
+import com.groupeisi.entities.ModuleEntity;
+import com.groupeisi.entities.ProfessorEntity;
+import com.groupeisi.entities.StudentEntity;
+import com.groupeisi.exception.EntityAlreadyExistsException;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
 import com.groupeisi.mapping.StudentMapper;
@@ -22,6 +27,7 @@ import java.util.stream.StreamSupport;
 public class StudentService {
     private IStudentRepository iStudentRepository;
     private StudentMapper studentMapper;
+    private FiliereService filiereService;
     private MessageSource messageSource;
 
     // Get All Students
@@ -31,27 +37,40 @@ public class StudentService {
         return StreamSupport.stream(Optional.ofNullable(iStudentRepository.findAll()).orElseThrow(() ->
                                 new EntityNotFoundException(messageSource.getMessage("appUser.notfound", new Object[]{id}, Locale.getDefault())))
                         .spliterator(), false)
-                .map(studentMapper::toStudent)
+                .map(studentEntity -> {
+                    Student std = studentMapper.toStudent(studentEntity);
+                    std.setFiliere_id(studentEntity.getFiliere().getId());
+                    return std;
+                })
                 .collect(Collectors.toList());
     }
 
     // Get One Student By his ID(matricule)
     @Transactional(readOnly = true)
     public Student getStudent(Integer id) {
-        return studentMapper.toStudent(iStudentRepository.findById(id)
+        StudentEntity stdEnt = iStudentRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("appUserId.notfound", new Object[]{id},
-                                Locale.getDefault()))));
+                                Locale.getDefault())));
+
+        Student stdDto = studentMapper.toStudent(stdEnt);
+        stdDto.setFiliere_id(stdEnt.getFiliere().getId());
+
+        return stdDto;
     }
 
     // Get One Student By his Email
     @Transactional(readOnly = true)
     public Student getStudentByEmail(String email) {
-        return studentMapper.toStudent(Optional.ofNullable(iStudentRepository.findByEmail(email))
+        StudentEntity stdEnt = Optional.ofNullable(iStudentRepository.findByEmail(email))
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("appUserEmail.notfound", new Object[]{email},
-                                Locale.getDefault()))));
+                                Locale.getDefault())));
 
+        Student stdDto = studentMapper.toStudent(stdEnt);
+        stdDto.setFiliere_id(stdEnt.getFiliere().getId());
+
+        return stdDto;
     }
 
     // Get Many Students By a Lastname
@@ -60,7 +79,11 @@ public class StudentService {
         return StreamSupport.stream(Optional.ofNullable(iStudentRepository.findByNom(lastname)).orElseThrow(() ->
                                 new EntityNotFoundException(messageSource.getMessage("appUserNom.notfound", new Object[]{lastname}, Locale.getDefault())))
                         .spliterator(), false)
-                .map(studentMapper::toStudent)
+                .map(studentEntity -> {
+                    Student std = studentMapper.toStudent(studentEntity);
+                    std.setFiliere_id(studentEntity.getFiliere().getId());
+                    return std;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -70,7 +93,11 @@ public class StudentService {
         return StreamSupport.stream(Optional.ofNullable(iStudentRepository.findByPrenom(firstname)).orElseThrow(() ->
                                 new EntityNotFoundException(messageSource.getMessage("appUserPrenom.notfound", new Object[]{firstname}, Locale.getDefault())))
                         .spliterator(), false)
-                .map(studentMapper::toStudent)
+                .map(studentEntity -> {
+                    Student std = studentMapper.toStudent(studentEntity);
+                    std.setFiliere_id(studentEntity.getFiliere().getId());
+                    return std;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -82,7 +109,11 @@ public class StudentService {
                                 )
                         )
                         .spliterator(), false)
-                .map(studentMapper::toStudent)
+                .map(studentEntity -> {
+                    Student std = studentMapper.toStudent(studentEntity);
+                    std.setFiliere_id(studentEntity.getFiliere().getId());
+                    return std;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -99,20 +130,38 @@ public class StudentService {
     }
 
     @Transactional
-    public Student createStudent(Student Student) {
-        return studentMapper.toStudent(iStudentRepository.save(studentMapper.fromStudent(Student)));
+    public Student createStudent(Student student) {
+        FiliereEntity fil = filiereService.getFiliereEntity(student.getFiliere_id());
+        StudentEntity stdEnt = studentMapper.fromStudent(student);
+        stdEnt.setFiliere(fil);
+
+        stdEnt = iStudentRepository.save(stdEnt);
+        student = studentMapper.toStudent(stdEnt);
+        student.setFiliere_id(stdEnt.getFiliere().getId());
+
+        return student;
     }
 
     @Transactional
-    public Student updateStudent(Integer id, Student Student) {
-        return iStudentRepository.findById(id)
+    public Student updateStudent(Integer id, Student student) {
+        FiliereEntity fil = filiereService.getFiliereEntity(student.getFiliere_id());
+        StudentEntity stdEnt = studentMapper.fromStudent(student);
+        stdEnt.setFiliere(fil);
+
+        StudentEntity finalStdEnt = stdEnt;
+        stdEnt = iStudentRepository.findById(id)
                 .map(entity -> {
-                    Student.setId(id);
-                    return studentMapper.toStudent(iStudentRepository.save(studentMapper.fromStudent(Student)));
+                    finalStdEnt.setId(id);
+                    return iStudentRepository.save(finalStdEnt);
                 })
                 .orElseThrow(
                         () -> new EntityNotFoundException(messageSource.getMessage("appUser.notfound", new Object[]{id}, Locale.getDefault()))
                 );
+
+        student = studentMapper.toStudent(stdEnt);
+        student.setFiliere_id(stdEnt.getFiliere().getId());
+
+        return student;
     }
 
     @Transactional

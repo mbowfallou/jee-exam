@@ -22,4 +22,5 @@ public class Professor {
     private String password;
     private int etat;
     private List<String> modules;
+    private String appRoles;
 }

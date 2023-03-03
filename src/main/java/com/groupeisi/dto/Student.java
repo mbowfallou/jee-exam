@@ -25,4 +25,5 @@ public class Student {
     private int filiere_id;
     private String filiere_name;
     private String roles_name;
+    private String appRoles;
 }

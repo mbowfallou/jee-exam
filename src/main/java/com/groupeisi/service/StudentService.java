@@ -1,6 +1,7 @@
 package com.groupeisi.service;
 
 import com.groupeisi.dao.IStudentRepository;
+import com.groupeisi.dto.Professor;
 import com.groupeisi.dto.Student;
 import com.groupeisi.entities.*;
 import com.groupeisi.exception.EntityNotFoundException;
@@ -121,14 +122,18 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public Student getStudentByEmailAndPassword(String email, String password) {
-        return studentMapper.toStudent(Optional.ofNullable(iStudentRepository.findByEmailAndPassword(email, password))
+        return Optional.ofNullable(iStudentRepository.findByEmailAndPassword(email, password))
+                .map(studentEntity -> {
+                    Student etd = studentMapper.toStudent(studentEntity);
+                    etd.setAppRoles(studentEntity.getAppRoles().getNom());
+                    return etd;
+                })
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("appUserEmail.notfound", new Object[]{email},
                                 Locale.getDefault()
                         )
                         )
-                )
-        );
+                );
     }
 
     @Transactional

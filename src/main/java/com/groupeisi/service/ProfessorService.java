@@ -116,14 +116,17 @@ public class ProfessorService {
 
     @Transactional(readOnly = true)
     public Professor getProfessorByEmailAndPassword(String email, String password) {
-        return professorMapper.toProfessor(Optional.ofNullable(iProfessorRepository.findByEmailAndPassword(email, password))
+        return Optional.ofNullable(iProfessorRepository.findByEmailAndPassword(email, password))
+                        .map(professorEntity -> {
+                            Professor prof = professorMapper.toProfessor(professorEntity);
+                            prof.setAppRoles(professorEntity.getAppRoles().getNom());
+                            return prof;
+                        })
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("profEmail.notfound", new Object[]{email},
-                                Locale.getDefault()
+                                Locale.getDefault())
                         )
-                        )
-                )
-        );
+                );
     }
 
     @Transactional

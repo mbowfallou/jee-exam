@@ -21,4 +21,5 @@ public class Professor {
     private String email;
     private String password;
     private int etat;
+    private List<String> modules;
 }

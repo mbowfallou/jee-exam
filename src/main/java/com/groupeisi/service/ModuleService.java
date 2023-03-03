@@ -1,9 +1,7 @@
 package com.groupeisi.service;
 
-import com.groupeisi.dao.IFiliereRepository;
 import com.groupeisi.dao.IModuleRepository;
 import com.groupeisi.dto.ModuleDto;
-import com.groupeisi.dto.Professor;
 import com.groupeisi.entities.FiliereEntity;
 import com.groupeisi.entities.ModuleEntity;
 import com.groupeisi.entities.ProfessorEntity;
@@ -53,10 +51,16 @@ public class ModuleService {
     // Get One Module By its ID
     @Transactional(readOnly = true)
     public ModuleDto getModule(Integer id) {
-        return moduleMapper.toModule(iModuleRepository.findById(id)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(messageSource.getMessage("moduleId.notfound", new Object[]{id},
-                                Locale.getDefault()))));
+        return iModuleRepository.findById(id)
+                .map(moduleEntity -> {
+                    ModuleDto mod = moduleMapper.toModule(moduleEntity);
+                    mod.setProfessor_id(moduleEntity.getProfessor().getId());
+                    mod.setFiliere_id(moduleEntity.getFiliere().getId());
+                    mod.setProfessor_name(moduleEntity.getProfessor().getPrenom() + " " + moduleEntity.getProfessor().getNom());
+                    mod.setFiliere_name(moduleEntity.getFiliere().getName());
+                    return mod;
+                })
+                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("module.notfound", new Object[]{id}, Locale.getDefault())));
     }
 
     // Get One Module By its name
@@ -65,7 +69,14 @@ public class ModuleService {
         return StreamSupport.stream(Optional.ofNullable(iModuleRepository.findByName(name)).orElseThrow(() ->
                                 new EntityNotFoundException(messageSource.getMessage("moduleName.notfound", new Object[]{name}, Locale.getDefault())))
                         .spliterator(), false)
-                .map(moduleMapper::toModule)
+                .map(moduleEntity -> {
+                    ModuleDto mod = moduleMapper.toModule(moduleEntity);
+                    mod.setProfessor_id(moduleEntity.getProfessor().getId());
+                    mod.setFiliere_id(moduleEntity.getFiliere().getId());
+                    mod.setProfessor_name(moduleEntity.getProfessor().getPrenom() + " " + moduleEntity.getProfessor().getNom());
+                    mod.setFiliere_name(moduleEntity.getFiliere().getName());
+                    return mod;
+                })
                 .collect(Collectors.toList());
 
     }

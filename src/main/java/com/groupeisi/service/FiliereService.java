@@ -3,7 +3,10 @@ package com.groupeisi.service;
 import com.groupeisi.dao.IFiliereRepository;
 import com.groupeisi.dao.IModuleRepository;
 import com.groupeisi.dto.Filiere;
+import com.groupeisi.dto.ModuleDto;
+import com.groupeisi.dto.Student;
 import com.groupeisi.entities.FiliereEntity;
+import com.groupeisi.entities.StudentEntity;
 import com.groupeisi.exception.EntityAlreadyExistsException;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
@@ -25,6 +28,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 public class FiliereService {
     private IFiliereRepository iFiliereRepository;
+    private IModuleRepository moduleRepository;
     private FiliereMapper filiereMapper;
     private MessageSource messageSource;
 
@@ -35,18 +39,46 @@ public class FiliereService {
         return StreamSupport.stream(Optional.ofNullable(iFiliereRepository.findAll()).orElseThrow(() ->
                                 new EntityNotFoundException(messageSource.getMessage("filiere.notfound", new Object[]{id}, Locale.getDefault())))
                         .spliterator(), false)
-                .map(filiereMapper::toFiliere)
+                .map(filiereEntity -> {
+                    Filiere fil = filiereMapper.toFiliere(filiereEntity);
+                    fil.setModules(StreamSupport.stream(Optional.ofNullable(moduleRepository.findAll()).orElseThrow(() ->
+                                            new EntityNotFoundException(messageSource.getMessage("module.notfound", new Object[]{id}, Locale.getDefault())))
+                                    .spliterator(), false)
+                            .filter(moduleEntity -> moduleEntity.getFiliere().getId() == id)
+                            .map(moduleEntity -> moduleEntity.getName())
+                            .collect(Collectors.toList()));
+                    return fil;
+                })
                 .collect(Collectors.toList());
     }
 
     // Get One Filiere By its ID
     @Transactional(readOnly = true)
     public Filiere getFiliere(Integer id) {
-        return filiereMapper.toFiliere(iFiliereRepository.findById(id)
+        FiliereEntity filEnt = iFiliereRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("filiereId.notfound", new Object[]{id},
-                                Locale.getDefault()))));
+                                Locale.getDefault()))
+                );
+
+        Filiere fil = filiereMapper.toFiliere(filEnt);
+
+        fil.setModules(StreamSupport.stream(Optional.ofNullable(moduleRepository.findAll()).orElseThrow(() ->
+                                new EntityNotFoundException(messageSource.getMessage("module.notfound", new Object[]{id}, Locale.getDefault())))
+                        .spliterator(), false)
+                        .filter(moduleEntity -> moduleEntity.getFiliere().getId() == id)
+                .map(moduleEntity -> moduleEntity.getName())
+                .collect(Collectors.toList()));
+        return fil;
     }
+
+//    @Transactional(readOnly = true)
+//    public Filiere getFiliere(Integer id) {
+//        return filiereMapper.toFiliere(iFiliereRepository.findById(id)
+//                .orElseThrow(() ->
+//                        new EntityNotFoundException(messageSource.getMessage("filiereId.notfound", new Object[]{id},
+//                                Locale.getDefault()))));
+//    }
 
     // Get One FiliereEntity By its ID
     @Transactional(readOnly = true)

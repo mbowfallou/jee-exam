@@ -12,4 +12,5 @@ import java.util.List;
 public class Filiere {
     private Integer id;
     private String name;
+    private List<String> modules;
 }

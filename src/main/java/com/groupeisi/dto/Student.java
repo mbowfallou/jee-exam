@@ -23,4 +23,6 @@ public class Student {
     private int etat;
     private Classe classe;
     private int filiere_id;
+    private String filiere_name;
+    private String roles_name;
 }

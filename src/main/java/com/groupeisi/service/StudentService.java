@@ -3,7 +3,6 @@ package com.groupeisi.service;
 import com.groupeisi.dao.IStudentRepository;
 import com.groupeisi.dto.Student;
 import com.groupeisi.entities.*;
-import com.groupeisi.exception.EntityAlreadyExistsException;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
 import com.groupeisi.mapping.StudentMapper;
@@ -37,6 +36,7 @@ public class StudentService {
                 .map(studentEntity -> {
                     Student std = studentMapper.toStudent(studentEntity);
                     std.setFiliere_id(studentEntity.getFiliere().getId());
+                    std.setFiliere_name(studentEntity.getFiliere().getName());
                     return std;
                 })
                 .collect(Collectors.toList());
@@ -52,6 +52,7 @@ public class StudentService {
 
         Student stdDto = studentMapper.toStudent(stdEnt);
         stdDto.setFiliere_id(stdEnt.getFiliere().getId());
+        stdDto.setFiliere_name(stdEnt.getFiliere().getName());
 
         return stdDto;
     }
@@ -66,6 +67,7 @@ public class StudentService {
 
         Student stdDto = studentMapper.toStudent(stdEnt);
         stdDto.setFiliere_id(stdEnt.getFiliere().getId());
+        stdDto.setFiliere_name(stdEnt.getFiliere().getName());
 
         return stdDto;
     }
@@ -79,6 +81,7 @@ public class StudentService {
                 .map(studentEntity -> {
                     Student std = studentMapper.toStudent(studentEntity);
                     std.setFiliere_id(studentEntity.getFiliere().getId());
+                    std.setFiliere_name(studentEntity.getFiliere().getName());
                     return std;
                 })
                 .collect(Collectors.toList());
@@ -93,6 +96,7 @@ public class StudentService {
                 .map(studentEntity -> {
                     Student std = studentMapper.toStudent(studentEntity);
                     std.setFiliere_id(studentEntity.getFiliere().getId());
+                    std.setFiliere_name(studentEntity.getFiliere().getName());
                     return std;
                 })
                 .collect(Collectors.toList());
@@ -109,6 +113,7 @@ public class StudentService {
                 .map(studentEntity -> {
                     Student std = studentMapper.toStudent(studentEntity);
                     std.setFiliere_id(studentEntity.getFiliere().getId());
+                    std.setFiliere_name(studentEntity.getFiliere().getName());
                     return std;
                 })
                 .collect(Collectors.toList());

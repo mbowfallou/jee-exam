@@ -1,6 +1,8 @@
 package com.groupeisi.service;
 
+import com.groupeisi.dao.IModuleRepository;
 import com.groupeisi.dao.IProfessorRepository;
+import com.groupeisi.dto.ModuleDto;
 import com.groupeisi.dto.Professor;
 import com.groupeisi.entities.ProfessorEntity;
 import com.groupeisi.exception.EntityNotFoundException;
@@ -22,6 +24,7 @@ import java.util.stream.StreamSupport;
 @AllArgsConstructor
 public class ProfessorService {
     private IProfessorRepository iProfessorRepository;
+    private IModuleRepository moduleRepository;
     private ProfessorMapper professorMapper;
     private FiliereService filiereService;
     private MessageSource messageSource;
@@ -40,10 +43,24 @@ public class ProfessorService {
     // Get One Professor By his ID(matricule)
     @Transactional(readOnly = true)
     public Professor getProfessor(Integer id) {
-        return professorMapper.toProfessor(iProfessorRepository.findById(id)
+        return iProfessorRepository.findById(id)
+                .map(professorEntity -> {
+                    Professor prof = professorMapper.toProfessor(professorEntity);
+                    prof.setModules(StreamSupport.stream(Optional.ofNullable(moduleRepository.findAll()).orElseThrow(() ->
+                                            new EntityNotFoundException(messageSource.getMessage("module.notfound", new Object[]{id}, Locale.getDefault())))
+                                    .spliterator(), false)
+                            .filter(moduleEntity -> moduleEntity.getProfessor().getId() == id)
+                            .map(moduleEntity -> moduleEntity.getName() + " ("+ moduleEntity.getFiliere().getName() +")")
+                            .collect(Collectors.toList()));
+                    return prof;
+                })
                 .orElseThrow(() ->
                         new EntityNotFoundException(messageSource.getMessage("profId.notfound", new Object[]{id},
-                                Locale.getDefault()))));
+                                Locale.getDefault())));
+//        return professorMapper.toProfessor(iProfessorRepository.findById(id)
+//                .orElseThrow(() ->
+//                        new EntityNotFoundException(messageSource.getMessage("profId.notfound", new Object[]{id},
+//                                Locale.getDefault()))));
     }
 
     // Get One ProfessorEntity By his ID(matricule)

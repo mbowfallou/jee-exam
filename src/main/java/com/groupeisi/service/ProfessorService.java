@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 public class ProfessorService {
     private IProfessorRepository iProfessorRepository;
     private ProfessorMapper professorMapper;
+    private FiliereService filiereService;
     private MessageSource messageSource;
 
     // Get All Professors

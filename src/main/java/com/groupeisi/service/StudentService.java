@@ -2,10 +2,7 @@ package com.groupeisi.service;
 
 import com.groupeisi.dao.IStudentRepository;
 import com.groupeisi.dto.Student;
-import com.groupeisi.entities.FiliereEntity;
-import com.groupeisi.entities.ModuleEntity;
-import com.groupeisi.entities.ProfessorEntity;
-import com.groupeisi.entities.StudentEntity;
+import com.groupeisi.entities.*;
 import com.groupeisi.exception.EntityAlreadyExistsException;
 import com.groupeisi.exception.EntityNotFoundException;
 import com.groupeisi.exception.RequestException;
@@ -134,6 +131,8 @@ public class StudentService {
         FiliereEntity fil = filiereService.getFiliereEntity(student.getFiliere_id());
         StudentEntity stdEnt = studentMapper.fromStudent(student);
         stdEnt.setFiliere(fil);
+        // T O  C H A N G E
+        stdEnt.setClasse(Classe.Premiere);
 
         stdEnt = iStudentRepository.save(stdEnt);
         student = studentMapper.toStudent(stdEnt);
@@ -147,6 +146,8 @@ public class StudentService {
         FiliereEntity fil = filiereService.getFiliereEntity(student.getFiliere_id());
         StudentEntity stdEnt = studentMapper.fromStudent(student);
         stdEnt.setFiliere(fil);
+        // T O  C H A N G E
+        stdEnt.setClasse(Classe.Premiere);
 
         StudentEntity finalStdEnt = stdEnt;
         stdEnt = iStudentRepository.findById(id)

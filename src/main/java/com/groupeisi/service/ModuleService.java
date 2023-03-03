@@ -43,6 +43,8 @@ public class ModuleService {
                     ModuleDto mod = moduleMapper.toModule(moduleEntity);
                     mod.setProfessor_id(moduleEntity.getProfessor().getId());
                     mod.setFiliere_id(moduleEntity.getFiliere().getId());
+                    mod.setProfessor_name(moduleEntity.getProfessor().getPrenom() + " " + moduleEntity.getProfessor().getNom());
+                    mod.setFiliere_name(moduleEntity.getFiliere().getName());
                     return mod;
                 })
                 .collect(Collectors.toList());

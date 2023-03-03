@@ -2,7 +2,6 @@ package com.groupeisi.controller;
 
 import com.groupeisi.dto.Filiere;
 import com.groupeisi.service.FiliereService;
-import com.groupeisi.service.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/filieres")
 @AllArgsConstructor
@@ -51,7 +51,13 @@ public class FiliereRestController {
 
     // Remove A Filiere By its ID
     @DeleteMapping("/{id}")
-    public void deleteFiliere(@PathVariable("id") int id){
-        filiereService.deleteFiliere(id);
+    public Filiere deleteFiliere(@PathVariable("id") int id){
+        Filiere f = filiereService.getFiliere(id);
+        try{
+            filiereService.deleteFiliere(id);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return f;
     }
 }

@@ -5,6 +5,7 @@ import com.groupeisi.service.FiliereService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ public class FiliereRestController {
 
     // Get All Modules
     @GetMapping
+    //@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public List<Filiere> getModules(){
         return filiereService.getFilieres();
     }

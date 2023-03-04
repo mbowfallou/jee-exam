@@ -19,8 +19,10 @@ public class Professor {
     private String adresse;
     @NotNull(message = "L'email ne doit pas etre nul!")
     private String email;
+    @NotNull(message = "Le nom d'utilisateur ne doit pas etre nul!")
+    private String username;
     private String password;
     private int etat;
     private List<String> modules;
-    private String appRoles;
+    //private String appRoles;
 }

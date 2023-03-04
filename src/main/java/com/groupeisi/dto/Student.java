@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -19,11 +20,13 @@ public class Student {
     private String adresse;
     @NotNull(message = "L'email ne doit pas etre nul!")
     private String email;
+    @NotNull(message = "Le nom d'utilisateur ne doit pas etre nul!")
+    private String username;
     private String password;
     private int etat;
     private Classe classe;
     private int filiere_id;
     private String filiere_name;
     private String roles_name;
-    private String appRoles;
+    //private String appRoles;
 }

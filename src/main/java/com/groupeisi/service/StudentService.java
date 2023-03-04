@@ -125,7 +125,7 @@ public class StudentService {
         return Optional.ofNullable(iStudentRepository.findByEmailAndPassword(email, password))
                 .map(studentEntity -> {
                     Student etd = studentMapper.toStudent(studentEntity);
-                    etd.setAppRoles(studentEntity.getAppRoles().getNom());
+                    //etd.setAppRoles(studentEntity.getAppRoles().getNom());
                     return etd;
                 })
                 .orElseThrow(() ->

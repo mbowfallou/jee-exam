@@ -23,6 +23,8 @@ public class StudentEntity {
     private String adresse;
     @Column(length = 150, nullable = false, unique = true)
     private String email;
+    @Column(length = 150, nullable = false, unique = true)
+    private String username;
     private String password;
     private int etat;
     @Column(nullable = false)

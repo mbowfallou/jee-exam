@@ -119,7 +119,7 @@ public class ProfessorService {
         return Optional.ofNullable(iProfessorRepository.findByEmailAndPassword(email, password))
                         .map(professorEntity -> {
                             Professor prof = professorMapper.toProfessor(professorEntity);
-                            prof.setAppRoles(professorEntity.getAppRoles().getNom());
+                            //prof.setAppRoles(professorEntity.getAppRoles().getNom());
                             return prof;
                         })
                 .orElseThrow(() ->

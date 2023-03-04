@@ -18,8 +18,8 @@ public class AppRolesEntity {
     private Integer id;
     @Column(length = 150, nullable = false, unique = true)
     private String nom;
-    @OneToMany(mappedBy = "appRoles")
-    private List<StudentEntity> studentEntities;
-    @OneToMany(mappedBy = "appRoles")
-    private List<ProfessorEntity> professorEntities;
+//    @OneToMany(mappedBy = "appRoles")
+//    private List<StudentEntity> studentEntities;
+//    @OneToMany(mappedBy = "appRoles")
+//    private List<ProfessorEntity> professorEntities;
 }
